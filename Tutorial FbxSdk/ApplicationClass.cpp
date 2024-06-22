@@ -11,8 +11,8 @@ ApplicationClass::ApplicationClass()
 	m_TextClass = 0;
 
 	
-	modelposition = XMMatrixIdentity() * XMMatrixScaling(0.1f, 0.1f, -0.1f);
-	modelposition2 = XMMatrixIdentity()* XMMatrixTranslation(0.0f, 0.0f, -30.0f);
+	modelposition = XMMatrixIdentity() * XMMatrixScaling(0.1f, 0.1f, 0.1f);
+	modelposition2 = XMMatrixTranslation(5.0f, 5.0f, 0.0f) *XMMatrixScaling(5.0f, 5.0f, 5.0f);
 }
 
 ApplicationClass::~ApplicationClass()
@@ -95,7 +95,7 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, bool vsyncEnab
 		return false;
 	}
 
-	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\Timmy Binary.fbx");//Standing Taunt Battlecry
+	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\Timmy Unity.fbx");//Standing Taunt Battlecry
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not load Fbx file.", L"Error", MB_OK);
@@ -198,16 +198,16 @@ bool ApplicationClass::Frame()
 
 	//백 버퍼 초기화
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.2f, 1.0f);
-	m_TextClass->BeginDraw();
+
 	
 	modelposition = modelposition * XMMatrixRotationY(0.05f);//회전
 	m_ShaderClass->Render(m_Direct3D->GetDeviceContext(), modelposition, viewMatrix, projectionMatrix);
 	m_FbxLoader->Render(m_Direct3D->GetDeviceContext());
 
-	//m_ColorShader->Render(m_Direct3D->GetDeviceContext(), 3, modelposition2, viewMatrix, projectionMatrix);
-	//m_model->Render(m_Direct3D->GetDeviceContext());
+	m_ColorShader->Render(m_Direct3D->GetDeviceContext(), 3, modelposition2, viewMatrix, projectionMatrix);
+	m_model->Render(m_Direct3D->GetDeviceContext());
 
-
+	m_TextClass->BeginDraw();
 	m_InfoUi->Frame(m_TextClass, m_CameraClass->GetPosition(), m_CameraClass->GetRotation());
 
 	m_TextClass->EndDraw();

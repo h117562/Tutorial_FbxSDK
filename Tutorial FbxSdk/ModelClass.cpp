@@ -87,11 +87,11 @@ bool ModelClass::Initialize(ID3D11Device* device)
 
 void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 {
+	const int indexCounts = 3;
 	//인풋 어셈블러에서 버퍼를 활성화하여 렌더링 할 수 있도록 설정
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	//정점 버퍼에서 렌더링하는 유형을 설정함 (삼각형)
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->DrawIndexed(indexCounts, 0, 0);
 }
 
 

@@ -44,14 +44,14 @@ bool Mesh::InitializeBuffer(ID3D11Device* pDevice)
 	return true;
 }
 
-void Mesh::SetResource(ID3D11Device* pDevice , string str)
+void Mesh::SetResource(ID3D11Device* pDevice , std::string str)
 {
 	HRESULT result;
-	string filepath = str;
+	std::string filepath = str;
 
 	//파일 경로에서 마지막 \\가 /으로 나오는 문제가 있음 이를 바꿔줄거임
-	string target = "/";
-	string replacestr = "\\";
+	std::string target = "/";
+	std::string replacestr = "\\";
 	filepath.replace(filepath.find(target), target.size(), replacestr);
 
 	int strlen = filepath.size();

@@ -302,7 +302,7 @@ bool D3DClass::Initialize(bool vsync, HWND hwnd, bool fullscreen, float screenDe
 	
 	//기본 레스터라이저 설정 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_BACK;//폴리곤 앞면만 보여지게 그림 (뒷면을 제거한다는 의미)
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
@@ -321,16 +321,6 @@ bool D3DClass::Initialize(bool vsync, HWND hwnd, bool fullscreen, float screenDe
 
 	//설정한 레스터 상태 적용
 	m_deviceContext->RSSetState(m_rasterState);
-
-	//컬링 모드만 해제한 레스터를 생성하기 위한 것
-	rasterDesc.CullMode = D3D11_CULL_NONE;
-
-	//노 컬링 레스터라이저 상태 생성
-	result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateNoCulling);
-	if (FAILED(result))
-	{
-		return false;
-	}
 
 	//와이어 프레임 모드 설정
 	rasterDesc.AntialiasedLineEnable = false;

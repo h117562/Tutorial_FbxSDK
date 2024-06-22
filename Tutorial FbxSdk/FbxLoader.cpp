@@ -107,13 +107,17 @@ void FbxLoader::processMesh(FbxNode* pNode, ID3D11Device* pDevice)
 		//메쉬내 모든 정점 정보를 받아옴 
 		FbxVector4* positions = pMesh->GetControlPoints();
 
+		//UVSet 이름들을 불러옴
+		FbxStringList uvNames;
+		pMesh->GetUVSetNames(uvNames);
+		
 		//모든 텍스처 좌표를 배열에 저장
 		int polygonCount = pMesh->GetPolygonCount();
 		for (int j = 0; j < polygonCount; j++)
 		{
-			for (int i = 2; i >= 0; i--)//삼각형 폴리곤 기준 정점 그리는 순서에 따라 데이터를 배열에 밀어넣는다.
+			for (int i = 0; i < 3; i++)//삼각형 폴리곤 기준 정점 그리는 순서에 따라 데이터를 배열에 밀어넣는다.
 			{
-				bool unmappedUV;//매핑 여부
+				bool unmappedUV;//매핑 여부 (주의*) false를 리턴받게 되면 매핑이 되어있음을 의미
 				Vertex vt;
 
 				//정점 그리는 순서를 받아옴
@@ -127,12 +131,12 @@ void FbxLoader::processMesh(FbxNode* pNode, ID3D11Device* pDevice)
 				
 				//텍스처 좌표를 초기화
 				FbxVector2 fv2;
-				pMesh->GetPolygonVertexUV(j, i, "", fv2, unmappedUV);
+				pMesh->GetPolygonVertexUV(j, i, uvNames[0], fv2, unmappedUV);
 				vt.textureCoord = DirectX::XMFLOAT2(
 					static_cast<float>(fv2.mData[0]),
-					static_cast<float>(fv2.mData[1])
+					1.0f - static_cast<float>(fv2.mData[1])
 				);
-
+				
 				//배열에 추가
 				lMesh.vertices.emplace_back(vt);
 			}
@@ -172,16 +176,15 @@ bool FbxLoader::GetTextureFromMaterial(FbxSurfaceMaterial* pMaterial, ID3D11Devi
 
 	//Diffuse 속성을 가져옴 
 	FbxProperty prop = pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
-	if (!prop.IsValid()) {
-		cout << "Valid" << endl;
+	if (!prop.IsValid()) 
+	{
 		return false;
 	}
 
 	//텍스처 보유 확인
-	//메쉬 하나에 텍스처 하나만 로드 가능
 	int textureCount = prop.GetSrcObjectCount<FbxTexture>();
-	if (textureCount != 1) {
-		cout <<"textureCount - " << textureCount << endl;
+	if (!textureCount) 
+	{
 		return false;
 	}
 

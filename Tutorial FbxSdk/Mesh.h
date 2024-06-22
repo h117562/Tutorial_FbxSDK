@@ -1,10 +1,8 @@
 #include <vector>
-#include <iostream>
+#include <string>
 #include <fbxsdk.h>
 #include <d3dx11.h>
 #include <DirectXMath.h>
-using namespace std;
-
 
 struct Vertex
 {
@@ -21,7 +19,7 @@ public:
 	void Render(ID3D11DeviceContext* pDeviceContext);
 	void Shutdown();
 
-	void SetResource(ID3D11Device* pDevice, string filePath);
+	void SetResource(ID3D11Device* pDevice, std::string filePath);
 public:
 	std::vector<Vertex> vertices;
 	std::vector<UINT> indices;
