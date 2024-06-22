@@ -12,10 +12,6 @@ bool FbxLoader::LoadFile(ID3D11Device* pDevice, HWND hwnd, std::string fileDirec
 	FbxIOSettings* pIos;
 	FbxImporter* pImporter;
 	FbxScene* pScene;
-	//std::string fileName = "";
-	
-	//파일 이름만 잘라내기 위함
-	//fileName = fileDirectory.substr(fileDirectory.find_last_of('\\') + 1);
 
 	//FBX 매니저 생성
 	FbxManager* pManager = FbxManager::Create();
@@ -50,7 +46,7 @@ bool FbxLoader::LoadFile(ID3D11Device* pDevice, HWND hwnd, std::string fileDirec
 	pImporter->Destroy();
 	pImporter = nullptr;
 
-	//삼각형 폴리곤으로 변환함
+	//보통 폴리곤 형태가 사각형으로 되어 있기도 하여 일단 삼각형 폴리곤으로 변환함
 	FbxGeometryConverter converter(pManager);
 	converter.Triangulate(pScene, true);//true시 원본 데이터 유지 
 
@@ -115,7 +111,7 @@ void FbxLoader::processMesh(FbxNode* pNode, ID3D11Device* pDevice)
 		int polygonCount = pMesh->GetPolygonCount();
 		for (int j = 0; j < polygonCount; j++)
 		{
-			for (int i = 0; i < 3; i++)//삼각형 폴리곤 기준 정점 그리는 순서에 따라 데이터를 배열에 밀어넣는다.
+			for (int i = 2; i >= 0; i--)//삼각형 폴리곤 기준 정점 그리는 순서에 따라 데이터를 배열에 밀어넣는다.
 			{
 				bool unmappedUV;//매핑 여부
 				Vertex vt;
@@ -137,7 +133,6 @@ void FbxLoader::processMesh(FbxNode* pNode, ID3D11Device* pDevice)
 					static_cast<float>(fv2.mData[1])
 				);
 
-				if (!unmappedUV) cout << "no need texture " << endl;
 				//배열에 추가
 				lMesh.vertices.emplace_back(vt);
 			}
@@ -161,13 +156,8 @@ void FbxLoader::processMesh(FbxNode* pNode, ID3D11Device* pDevice)
 			}
 		
 			GetTextureFromMaterial(pMaterial, pDevice, lMesh);
-			
-			ID3D11ShaderResourceView* data = lMesh.CheckResource();
-			cout << materialCount << ", " << data << endl;
 		}
 
-		
-		cout << pMesh->GetName() << endl << endl;
 		m_meshes.emplace_back(lMesh);
 		pMesh->Destroy();
 	}

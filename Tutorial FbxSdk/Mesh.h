@@ -22,11 +22,10 @@ public:
 	void Shutdown();
 
 	void SetResource(ID3D11Device* pDevice, string filePath);
-	ID3D11ShaderResourceView* CheckResource();
 public:
 	std::vector<Vertex> vertices;
 	std::vector<UINT> indices;
-	ID3D11ShaderResourceView* diffuseTexture = NULL;
+	ID3D11ShaderResourceView* diffuseTexture;
 
 private:
 	ID3D11Buffer* m_vertexBuffer;

@@ -56,8 +56,6 @@ void Mesh::SetResource(ID3D11Device* pDevice , string str)
 
 	int strlen = filepath.size();
 	const char* str_utf8 = filepath.c_str();
-	cout << filepath << endl;
-	//제대로 할당 되었는지 확인하고 텍스처 로드
 	wchar_t* textureName = new wchar_t[strlen + 1];
 	if (textureName)
 	{
@@ -71,7 +69,7 @@ void Mesh::SetResource(ID3D11Device* pDevice , string str)
 			diffuseTexture = NULL;
 		}
 	}
-
+	
 	delete[] textureName;
 	return;
 }
@@ -111,9 +109,4 @@ void Mesh::Shutdown()
 	}
 
 	return;
-}
-
-ID3D11ShaderResourceView* Mesh::CheckResource()
-{
-	return this->diffuseTexture;
 }
