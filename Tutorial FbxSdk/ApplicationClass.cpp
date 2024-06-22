@@ -95,7 +95,7 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, bool vsyncEnab
 		return false;
 	}
 
-	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\Standing Taunt Battlecry.fbx");//Standing Taunt Battlecry
+	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\The Boss.fbx");//Standing Taunt Battlecry
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not load Fbx file.", L"Error", MB_OK);
@@ -121,7 +121,7 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, bool vsyncEnab
 		return false;
 	}
 
-	m_CameraClass->SetPosition(0.0f, 0.0f, -30.0f);
+	m_CameraClass->SetPosition(0.0f, 10.0f, -50.0f);
 
 	return result;
 }
@@ -200,7 +200,7 @@ bool ApplicationClass::Frame()
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.2f, 1.0f);
 	m_TextClass->BeginDraw();
 	
-
+	modelposition = modelposition *XMMatrixRotationY(0.05f);
 	m_ShaderClass->Render(m_Direct3D->GetDeviceContext(), modelposition, viewMatrix, projectionMatrix);
 	m_FbxLoader->Render(m_Direct3D->GetDeviceContext());
 
