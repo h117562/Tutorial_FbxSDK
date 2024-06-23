@@ -63,7 +63,7 @@ bool TextClass::Initialize(D3DClass* d3dClass)
 
 	//Dwrite 팩토리 생성
 	result = DWriteCreateFactory(
-		DWRITE_FACTORY_TYPE_SHARED,	//해당 팩토리를 공유할지 격리할지 설정
+		DWRITE_FACTORY_TYPE_SHARED,	//해당 팩토리를 공유할지 격리할지 정하는 플래그
 		__uuidof(IDWriteFactory),	//팩토리 인터페이스를 식별하는 GUID
 		reinterpret_cast<IUnknown**>(&m_dwFactory)//팩토리에 대한 포인터 주소
 	);
@@ -82,7 +82,7 @@ bool TextClass::Initialize(D3DClass* d3dClass)
 		DWRITE_FONT_STRETCH::DWRITE_FONT_STRETCH_NORMAL,//폰트 스트레치
 		30.0f,					//폰트 사이즈
 		L"ko",					//지역 이름 ex) KO, EN
-		&m_defaultFormat				//텍스트 형식(IDWriteTextFormat)에 대한 포인터 주소를 반환한다
+		&m_defaultFormat		//텍스트 형식(IDWriteTextFormat)에 대한 포인터 주소를 반환한다
 	);
 
 	if (FAILED(result))

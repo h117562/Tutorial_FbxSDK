@@ -11,8 +11,8 @@ ApplicationClass::ApplicationClass()
 	m_TextClass = 0;
 
 	
-	modelposition = XMMatrixIdentity() * XMMatrixScaling(0.1f, 0.1f, 0.1f);
-	modelposition2 = XMMatrixTranslation(5.0f, 5.0f, 0.0f) *XMMatrixScaling(5.0f, 5.0f, 5.0f);
+	model1_world = XMMatrixIdentity() * XMMatrixScaling(0.1f, 0.1f, 0.1f);
+	model2_world = XMMatrixTranslation(5.0f, 5.0f, 0.0f) *XMMatrixScaling(5.0f, 5.0f, 5.0f);
 }
 
 ApplicationClass::~ApplicationClass()
@@ -23,7 +23,7 @@ ApplicationClass::~ApplicationClass()
 bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, bool vsyncEnabled, bool fullScreen, float screenDepth, float screenNear)
 {
 	bool result;
-
+	
 	m_Direct3D = new D3DClass;
 	if (!m_Direct3D)
 	{
@@ -95,20 +95,20 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, bool vsyncEnab
 		return false;
 	}
 
-	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\Timmy Unity.fbx");//Standing Taunt Battlecry
+	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\Timmy Binary.fbx");//Standing Taunt Battlecry
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not load Fbx file.", L"Error", MB_OK);
 		return false;
 	}
 
-	m_model = new ModelClass;
-	if (!m_model)
+	m_Triangle = new TriangleModel;
+	if (!m_Triangle)
 	{
 		return false;
 	}
 
-	result = m_model->Initialize(m_Direct3D->GetDevice());
+	result = m_Triangle->Initialize(m_Direct3D->GetDevice());
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not load ModelClass.", L"Error", MB_OK);
@@ -128,11 +128,11 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, bool vsyncEnab
 
 void ApplicationClass::Shutdown()
 {
-	if (m_model)
+	if (m_Triangle)
 	{
-		m_model->Shutdown();
-		delete m_model;
-		m_model = 0;
+		m_Triangle->Shutdown();
+		delete m_Triangle;
+		m_Triangle = 0;
 	}
 
 	if (m_FbxLoader)
@@ -200,12 +200,12 @@ bool ApplicationClass::Frame()
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.2f, 1.0f);
 
 	
-	modelposition = modelposition * XMMatrixRotationY(0.05f);//회전
-	m_ShaderClass->Render(m_Direct3D->GetDeviceContext(), modelposition, viewMatrix, projectionMatrix);
+	model1_world = model1_world * XMMatrixRotationY(0.05f);//회전
+	m_ShaderClass->Render(m_Direct3D->GetDeviceContext(), model1_world, viewMatrix, projectionMatrix);
 	m_FbxLoader->Render(m_Direct3D->GetDeviceContext());
 
-	m_ColorShader->Render(m_Direct3D->GetDeviceContext(), 3, modelposition2, viewMatrix, projectionMatrix);
-	m_model->Render(m_Direct3D->GetDeviceContext());
+	m_ColorShader->Render(m_Direct3D->GetDeviceContext(), 3, model2_world, viewMatrix, projectionMatrix);
+	m_Triangle->Render(m_Direct3D->GetDeviceContext());
 
 	m_TextClass->BeginDraw();
 	m_InfoUi->Frame(m_TextClass, m_CameraClass->GetPosition(), m_CameraClass->GetRotation());

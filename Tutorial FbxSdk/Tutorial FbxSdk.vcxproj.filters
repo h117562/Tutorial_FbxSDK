@@ -39,7 +39,7 @@
     <ClCompile Include="ApplicationClass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ModelClass.cpp">
+    <ClCompile Include="TriangleModel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SystemClass.cpp">
@@ -92,7 +92,7 @@
     <ClInclude Include="SystemClass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ModelClass.h">
+    <ClInclude Include="TriangleModel.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CameraClass.h">

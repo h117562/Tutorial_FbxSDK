@@ -1,10 +1,8 @@
-
 #include <directxmath.h>
 #include <d3dx11.h>
 
-
 using namespace DirectX;
-class ModelClass
+class TriangleModel
 {
 public:
 	struct VertexObject
@@ -13,18 +11,15 @@ public:
 		XMFLOAT4 color;
 	};
 
-
-	ModelClass();
-	~ModelClass();
+	TriangleModel();
+	~TriangleModel();
 
 	bool Initialize(ID3D11Device*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
-	int GetIndexCount();
-
 private:
-	VertexObject* m_triangle;
+	VertexObject* m_vertices;
 	UINT* m_indices;
 
 	ID3D11Buffer* m_vertexBuffer;

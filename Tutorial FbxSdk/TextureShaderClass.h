@@ -28,17 +28,18 @@ public:
 	bool Render(ID3D11DeviceContext*, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix);
 
 private:
-	void OutputShaderErrorMessage(ID3D10Blob*, HWND, CONST WCHAR*);
-	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX);
+	void OutputShaderErrorMessage(ID3DBlob*, HWND, CONST WCHAR*);
+	bool UpdateShaderBuffers(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX);
 
 private:
-
 	ID3D11VertexShader* m_vertexShader;
 	ID3D11PixelShader* m_pixelShader;
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_matrixBuffer;
-	ID3D11SamplerState* TexSamplerState;
+	ID3D11SamplerState* m_samplerState;
 
+	UINT bufferCount = 1;
+	UINT startNumber = 0;
 };
 
 #endif

@@ -123,13 +123,13 @@ void FbxLoader::processMesh(FbxNode* pNode, ID3D11Device* pDevice)
 				//정점 그리는 순서를 받아옴
 				UINT index = pMesh->GetPolygonVertex(j, i);
 
-				//정점 좌표를 초기화
+				//정점 좌표를 저장
 				vt.position = DirectX::XMFLOAT3(
 					static_cast<float>(positions[index].mData[0]),
 					static_cast<float>(positions[index].mData[1]),
 					static_cast<float>(positions[index].mData[2]));
 				
-				//텍스처 좌표를 초기화
+				//텍스처 좌표를 저장
 				FbxVector2 fv2;
 				pMesh->GetPolygonVertexUV(j, i, uvNames[0], fv2, unmappedUV);
 				vt.textureCoord = DirectX::XMFLOAT2(

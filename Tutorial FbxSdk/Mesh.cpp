@@ -77,9 +77,6 @@ void Mesh::SetResource(ID3D11Device* pDevice , std::string str)
 
 void Mesh::Render(ID3D11DeviceContext* pDeviceContext)
 {
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-
 	pDeviceContext->PSSetShaderResources(0, 1, &diffuseTexture);
 	pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);

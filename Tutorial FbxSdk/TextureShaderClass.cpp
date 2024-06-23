@@ -33,12 +33,12 @@ bool TextureShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd) {
 
 	if (FAILED(result))
 	{
-		// If the shader failed to compile it should have writen something to the error message.
+		//파일로부터 컴파일에 실패했을 경우 오류 메시지를 파일로 생성
 		if (errorMessage)
 		{
 			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
 		}
-		// If there was nothing in the error message then it simply could not find the shader file itself.
+		//만약 오류 메시지가 없을 경우 파일을 찾을 수 없다는 의미
 		else
 		{
 			MessageBox(hwnd, vsFilename, L"Missing Vs Texture Shader File", MB_OK);
@@ -52,12 +52,12 @@ bool TextureShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd) {
 
 	if (FAILED(result))
 	{
-		// If the shader failed to compile it should have writen something to the error message.
+		//파일로부터 컴파일에 실패했을 경우 오류 메시지를 파일로 생성
 		if (errorMessage)
 		{
 			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
 		}
-		// If there was nothing in the error message then it simply could not find the file itself.
+		//만약 오류 메시지가 없을 경우 파일을 찾을 수 없다는 의미
 		else
 		{
 			MessageBox(hwnd, psFilename, L"Missing Ps Texture Shader File", MB_OK);
@@ -66,21 +66,21 @@ bool TextureShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd) {
 		return false;
 	}
 
-	// Create the vertex shader from the buffer.
+	//정점 쉐이더 생성
 	result = pDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Create the pixel shader from the buffer.
+	//픽셀 쉐이더 생성
 	result = pDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Create the vertex input layout description.
+	//쉐이더의 입력 데이터를 정의
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -97,11 +97,10 @@ bool TextureShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd) {
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[1].InstanceDataStepRate = 0;
 
-
+	//입력 데이터의 개수
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
-	/////////////////////////////////////////
-	// Create the vertex input layout.
+	//정점 입력 레이아웃 생성 (픽셀 쉐이더는 불가능)
 	result = pDevice->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(),
 		vertexShaderBuffer->GetBufferSize(), &m_layout);
 	if (FAILED(result))
@@ -109,14 +108,14 @@ bool TextureShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd) {
 		return false;
 	}
 
-	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
+	//정점, 픽셀 쉐이더 버퍼 해제
 	vertexShaderBuffer->Release();
 	vertexShaderBuffer = 0;
 
 	pixelShaderBuffer->Release();
 	pixelShaderBuffer = 0;
 
-	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	//매트릭스 버퍼 설정
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	matrixBufferDesc.ByteWidth = sizeof(MatrixBuffer);
 	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -124,25 +123,29 @@ bool TextureShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd) {
 	matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	//매트릭스 버퍼 생성
 	result = pDevice->CreateBuffer(&matrixBufferDesc, nullptr, &m_matrixBuffer);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-
+	//샘플러 State 설정
 	D3D11_SAMPLER_DESC sampDesc;
+
+	//변수 초기화
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;//텍스처 필터링 모드 (선형 보간)
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;//텍스처 좌표가 0에서 1사이를 반복하는 방법을 결정함
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;//이 경우에는 1로 나누어 나머지를 좌표로 사용
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;//D3D11_TEXTURE_ADDRESS_CLAMP는 초과하거나 미만인 경우 0 또는 1로 고정
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	result = pDevice->CreateSamplerState(&sampDesc, &TexSamplerState);
+	//샘플러 State 생성
+	result = pDevice->CreateSamplerState(&sampDesc, &m_samplerState);
 	if (FAILED(result))
 	{
 		return false;
@@ -157,17 +160,18 @@ bool TextureShaderClass::Render(ID3D11DeviceContext* pDeviceContext, XMMATRIX wo
 	bool result;
 
 
-	result = SetShaderParameters(pDeviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	result = UpdateShaderBuffers(pDeviceContext, worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 	{
 		return false;
 	}
 
+	//인풋 어셈블러에서 버퍼를 활성화하여 렌더링 할 수 있도록 설정
 	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pDeviceContext->IASetInputLayout(m_layout);
 	pDeviceContext->VSSetShader(m_vertexShader, NULL, 0);
 	pDeviceContext->PSSetShader(m_pixelShader, NULL, 0);
-	pDeviceContext->PSSetSamplers(0, 1, &TexSamplerState);
+	pDeviceContext->PSSetSamplers(0, 1, &m_samplerState);
 
 	return true;
 }
@@ -175,28 +179,28 @@ bool TextureShaderClass::Render(ID3D11DeviceContext* pDeviceContext, XMMATRIX wo
 
 void TextureShaderClass::Shutdown()
 {
-	// Release the matrix constant buffer.
+	//매트릭스 버퍼 해제
 	if (m_matrixBuffer)
 	{
 		m_matrixBuffer->Release();
 		m_matrixBuffer = 0;
 	}
 
-	// Release the layout.
+	//레이아웃 해제
 	if (m_layout)
 	{
 		m_layout->Release();
 		m_layout = 0;
 	}
 
-	// Release the pixel shader.
+	//픽셀 쉐이더 해제
 	if (m_pixelShader)
 	{
 		m_pixelShader->Release();
 		m_pixelShader = 0;
 	}
 
-	// Release the vertex shader.
+	//정점 쉐이더 해제
 	if (m_vertexShader)
 	{
 		m_vertexShader->Release();
@@ -206,12 +210,12 @@ void TextureShaderClass::Shutdown()
 	return;
 }
 
-void TextureShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, CONST WCHAR* fileName)
+//에러 내용을 텍스트 파일로 생성
+void TextureShaderClass::OutputShaderErrorMessage(ID3DBlob* errorMessage, HWND hwnd, CONST WCHAR* fileName)
 {
 	char* compileErrors;
 	unsigned long long bufferSize, i;
 	std::ofstream fout;
-
 
 	// Get a pointer to the error message text buffer.
 	compileErrors = (char*)(errorMessage->GetBufferPointer());
@@ -242,19 +246,21 @@ void TextureShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND
 	return;
 }
 
-bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX modelPosition, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix)
+//쉐이더에서 사용하는 버퍼를 업데이트
+bool TextureShaderClass::UpdateShaderBuffers(ID3D11DeviceContext* deviceContext, 
+	XMMATRIX modelPosition, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBuffer* dataPtr = 0;
-	unsigned int bufferNumber;
 
+	//행렬 전치
 	modelPosition = XMMatrixTranspose(modelPosition);
 	viewMatrix = XMMatrixTranspose(viewMatrix);
 	projectionMatrix = XMMatrixTranspose(projectionMatrix);
 
-	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//매트릭스 버퍼를 매핑 (GPU 에서 데이터를 가져옴) 
+	result = deviceContext->Map(m_matrixBuffer, NULL, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -262,15 +268,15 @@ bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 
 	dataPtr = (MatrixBuffer*)mappedResource.pData;
 
+	//매개변수로 가져온 데이터로 업데이트
 	dataPtr->mWorld = modelPosition;
 	dataPtr->mView = viewMatrix;
 	dataPtr->mProjection = projectionMatrix;
+	
+	//매트릭스 버퍼를 언매핑 (GPU 로 데이터를 전달)
+	deviceContext->Unmap(m_matrixBuffer, NULL);
 
-	deviceContext->Unmap(m_matrixBuffer, 0);
-
-	bufferNumber = 0;
-
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+	deviceContext->VSSetConstantBuffers(startNumber, bufferCount, &m_matrixBuffer);
 
 	return true;
 }

@@ -140,7 +140,7 @@
     <ClCompile Include="InfoUiClass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="ModelClass.cpp" />
+    <ClCompile Include="TriangleModel.cpp" />
     <ClCompile Include="SystemClass.cpp" />
     <ClCompile Include="TextClass.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
@@ -153,7 +153,7 @@
     <ClInclude Include="FbxLoader.h" />
     <ClInclude Include="InfoUiClass.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="ModelClass.h" />
+    <ClInclude Include="TriangleModel.h" />
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="TextureShaderClass.h" />

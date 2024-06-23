@@ -25,17 +25,17 @@ bool SystemClass::Initialize()
 	int posX, posY;
 	bool result;
 
-	//메시지 핸들
+	//WndProc 함수에서 SystemClass의 인스턴스를 참조하기 위한 전역 변수
 	ApplicationHandle = this;
 
-	//윈도우 핸들 가져오기
+	//현재 프로그램의 프로세스 인스턴스 핸들을 가져옴
 	m_hinstance = GetModuleHandle(NULL);
 
-	//윈도우 이름
-	m_applicationName = L"DWrite Tutorial";
+	//윈도우 클래스 이름
+	m_applicationName = L"Tutorial FbxSDK";
 
 	//윈도우 클래스 설정
-	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	wc.style = CS_OWNDC;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;

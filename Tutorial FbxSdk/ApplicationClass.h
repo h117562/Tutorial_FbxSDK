@@ -9,7 +9,7 @@
 #include "FbxLoader.h"
 #include "InfoUiClass.h"
 #include "TextClass.h"
-#include "ModelClass.h"
+#include "TriangleModel.h"
 
 class ApplicationClass
 {
@@ -30,8 +30,8 @@ private:
 	TextClass* m_TextClass;
 	TextureShaderClass* m_ShaderClass;
 	FbxLoader* m_FbxLoader;
-	ModelClass* m_model;
-	XMMATRIX modelposition;
-	XMMATRIX modelposition2;
+	TriangleModel* m_Triangle;
+	XMMATRIX model1_world;
+	XMMATRIX model2_world;
 };
 #endif

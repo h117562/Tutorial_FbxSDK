@@ -28,4 +28,7 @@ public:
 private:
 	ID3D11Buffer* m_vertexBuffer;
 	ID3D11Buffer* m_indexBuffer;
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
 };
