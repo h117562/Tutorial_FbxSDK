@@ -1,7 +1,8 @@
 #ifndef _INFO_UICLASS_H_
 #define _INFO_UICLASS_H_
 
-#include <Windows.h>
+#pragma comment(lib, "winmm.lib")
+
 #include "textclass.h"
 
 class InfoUiClass
