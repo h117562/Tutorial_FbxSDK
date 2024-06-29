@@ -1,12 +1,12 @@
 #ifndef _APPLICATION_CLASS_H_
 #define _APPLICATION_CLASS_H_
 
-#include <Windows.h>
+
+#include "FbxLoader.h"
 #include "D3DClass.h"
 #include "ColorShaderClass.h"
 #include "TextureShaderClass.h"
 #include "CameraClass.h"
-#include "FbxLoader.h"
 #include "InfoUiClass.h"
 #include "TextClass.h"
 #include "TriangleModel.h"
