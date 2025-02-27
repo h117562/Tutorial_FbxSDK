@@ -302,7 +302,7 @@ bool D3DClass::Initialize(bool vsync, HWND hwnd, bool fullscreen, float screenDe
 	
 	//기본 레스터라이저 설정 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;//폴리곤 앞면만 보여지게 그림 (뒷면을 제거한다는 의미)
+	rasterDesc.CullMode = D3D11_CULL_BACK;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;

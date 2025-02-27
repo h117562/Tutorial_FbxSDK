@@ -95,7 +95,7 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, bool vsyncEnab
 		return false;
 	}
 
-	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\Timmy Binary.fbx");//Standing Taunt Battlecry
+	result = m_FbxLoader->LoadFile(m_Direct3D->GetDevice(), hwnd, "..\\Data\\Models\\Standing Taunt Battlecry.fbx");//Standing Taunt Battlecry
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not load Fbx file.", L"Error", MB_OK);

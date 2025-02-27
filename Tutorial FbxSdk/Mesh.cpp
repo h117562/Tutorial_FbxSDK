@@ -44,40 +44,38 @@ bool Mesh::InitializeBuffer(ID3D11Device* pDevice)
 	return true;
 }
 
-void Mesh::SetResource(ID3D11Device* pDevice , std::string str)
+bool Mesh::SetResource(ID3D11Device* pDevice, std::string str)
 {
 	HRESULT result;
-	std::string filepath = str;
 
-	//파일 경로에서 마지막 \\가 /으로 나오는 문제가 있음 이를 바꿔줄거임
-	std::string target = "/";
-	std::string replacestr = "\\";
-	filepath.replace(filepath.find(target), target.size(), replacestr);
-
-	int strlen = filepath.size();
-	const char* str_utf8 = filepath.c_str();
-	wchar_t* textureName = new wchar_t[strlen + 1];
+	int len = str.length();
+	wchar_t* textureName = new wchar_t[len + 1] {};
 	if (textureName)
 	{
 		//멀티바이트 문자로 변환
-		MultiByteToWideChar(CP_UTF8, 0, str_utf8, -1, textureName, strlen + 1);
+		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, textureName, len);// -1이면 함수는 종료 null 문자를 포함하여 전체 입력 문자열을 처리
 
 		//Diffuse 텍스처 파일 경로를 통해 텍스처 리소스 생성
-		result = D3DX11CreateShaderResourceViewFromFile(pDevice, textureName, 0, 0, &diffuseTexture, 0);
+		result = D3DX11CreateShaderResourceViewFromFile(pDevice, textureName, 0, 0, &m_diffuseTexture, 0);
 		if (FAILED(result))
 		{
-			diffuseTexture = NULL;
+			delete[] textureName;
+
+			m_diffuseTexture = NULL;
+
+			return false;
 		}
 	}
-	
+
 	delete[] textureName;
-	return;
+
+	return true;
 }
 
 
 void Mesh::Render(ID3D11DeviceContext* pDeviceContext)
 {
-	pDeviceContext->PSSetShaderResources(0, 1, &diffuseTexture);
+	pDeviceContext->PSSetShaderResources(0, 1, &m_diffuseTexture);
 	pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	pDeviceContext->DrawIndexed(indices.size(), 0, 0);
@@ -87,10 +85,10 @@ void Mesh::Render(ID3D11DeviceContext* pDeviceContext)
 
 void Mesh::Shutdown()
 {
-	if (diffuseTexture)
+	if (m_diffuseTexture)
 	{
-		diffuseTexture->Release();
-		diffuseTexture = nullptr;
+		m_diffuseTexture->Release();
+		m_diffuseTexture = nullptr;
 	}
 
 	if (m_vertexBuffer)

@@ -1,8 +1,8 @@
-#include <vector>
-#include <string>
 #include <fbxsdk.h>
 #include <d3dx11.h>
 #include <DirectXMath.h>
+#include <vector>
+#include <string>
 
 struct Vertex
 {
@@ -19,11 +19,11 @@ public:
 	void Render(ID3D11DeviceContext* pDeviceContext);
 	void Shutdown();
 
-	void SetResource(ID3D11Device* pDevice, std::string filePath);
+	bool SetResource(ID3D11Device* pDevice, std::string filePath);
 public:
 	std::vector<Vertex> vertices;
 	std::vector<UINT> indices;
-	ID3D11ShaderResourceView* diffuseTexture;
+	ID3D11ShaderResourceView* m_diffuseTexture;
 
 private:
 	ID3D11Buffer* m_vertexBuffer;

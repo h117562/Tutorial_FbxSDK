@@ -19,6 +19,8 @@ private:
 
 private:
 	std::vector<Mesh> m_meshes;
+	std::string m_originPath;
+	std::string m_prevTexturePath;
 };
 
 #endif
